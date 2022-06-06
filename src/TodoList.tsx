@@ -1,8 +1,9 @@
-import React from 'react';
-import {filterValueType} from "./App";
+import React, {useState, ChangeEvent, KeyboardEvent} from 'react';
+import {FilterValuesType} from './App';
+import {Button} from "./components/Button";
 
 type TaskType = {
-    id: number
+    id: string
     title: string
     isDone: boolean
 }
@@ -10,37 +11,62 @@ type TaskType = {
 type PropsType = {
     title: string
     tasks: Array<TaskType>
-    removeTask: (idTask: number) => void
-    changeFilter: (value: filterValueType) => void
-
+    removeTask: (taskId: string) => void
+    changeFilter: (value: FilterValuesType) => void
+    addTask: (newTitle: string) => void
 }
 
 export function Todolist(props: PropsType) {
 
-    return (
-        <div>
-            <h3>{props.title}</h3>
-            <div>
-                <input/>
-                <button>+</button>
-            </div>
-            <ul>
-                {props.tasks.map((el) => {
-                    return (
+    const [newTitle, setNewTitle] = useState('')
 
-                        <li key={el.id}>
-                            <button onClick={() => props.removeTask(el.id)}>X</button>
-                            <input type="checkbox" checked={el.isDone}/>
-                            <span>{el.title}</span>
+    const addTaskHandler = () => {
+        props.addTask(newTitle)
+        setNewTitle('')
+    }
+
+    const onChangeHandler = (event: ChangeEvent<HTMLInputElement>) => {
+        setNewTitle(event.currentTarget.value)
+    }
+    const onKeyPressHandler = (event: KeyboardEvent<HTMLInputElement>) => {
+        if (event.key === 'Enter') {
+            addTaskHandler()
+        }
+    }
+
+    const gigaChadChangeFilterHandler = (value: FilterValuesType) => {
+        {
+            props.changeFilter(value)
+        }
+    }
+    const removeTaskHandler = (tId: string) => {
+        props.removeTask(tId)
+    }
+
+    return <div>
+        <h3>{props.title}</h3>
+        <div>
+            <input value={newTitle} onChange={onChangeHandler} onKeyDown={onKeyPressHandler}/>
+            {/*<button onClick={addTaskHandler}>+</button>*/}
+            <Button name={'+'} callBack={addTaskHandler} />
+        </div>
+        <ul>
+            {
+                props.tasks.map(t => {
+                    return (
+                        <li key={t.id}>
+                            <input type="checkbox" checked={t.isDone}/>
+                            <span>{t.title}</span>
+                            <Button name={'x'} callBack={() => removeTaskHandler(t.id)}/>
                         </li>
                     )
-                })}
-            </ul>
-            <div>
-                <button onClick={()=>props.changeFilter('All')}>All</button>
-                <button onClick={()=>props.changeFilter('Active')}>Active</button>
-                <button onClick={()=>props.changeFilter('Completed')}>Completed</button>
-            </div>
+                })
+            }
+        </ul>
+        <div>
+            <Button name={'all'} callBack={() => gigaChadChangeFilterHandler('all')}/>
+            <Button name={'Active'} callBack={() => gigaChadChangeFilterHandler('active')}/>
+            <Button name={'Completed'} callBack={() => gigaChadChangeFilterHandler('completed')}/>
         </div>
-    )
+    </div>
 }
