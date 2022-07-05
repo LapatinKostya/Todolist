@@ -1,10 +1,10 @@
 import React, {ChangeEvent, useState} from 'react';
+import {TextField} from "@material-ui/core";
 
 type EditableSpanPropsType = {
     title: string
     callBack: (newTitle: string) => void
 }
-
 
 export const EditableSpan = (props: EditableSpanPropsType) => {
     const [edit, setEdit] = useState<boolean>(false)
@@ -13,7 +13,7 @@ export const EditableSpan = (props: EditableSpanPropsType) => {
         setNewTitle(e.currentTarget.value)
     }
     const addTitle = () => {
-        if(newTitle !== '') {
+        if (newTitle !== '') {
             props.callBack(newTitle)
         }
     }
@@ -22,9 +22,15 @@ export const EditableSpan = (props: EditableSpanPropsType) => {
         setEdit(!edit)
         addTitle()
     }
+
     return (
         edit
-            ? <input autoFocus onBlur={onDoubleClickHandler} value={newTitle} onChange={onChangeHandler}/>
+            ? <TextField
+                autoFocus
+                onBlur={onDoubleClickHandler}
+                value={newTitle}
+                onChange={onChangeHandler}
+            />
             : <span onDoubleClick={onDoubleClickHandler}>{props.title}</span>
     );
 };
