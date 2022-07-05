@@ -2,6 +2,8 @@ import React, {ChangeEvent} from 'react';
 import {FilterValuesType} from './App';
 import {Input} from "./Components/Input";
 import {EditableSpan} from "./Components/EditableSpan";
+import {Button, Checkbox, IconButton, List, ListItem} from "@material-ui/core";
+import {Delete, HighlightOff} from "@material-ui/icons";
 
 export type TaskType = {
     id: string
@@ -43,12 +45,14 @@ export function Todolist(props: PropsType) {
 
     return <div>
         <h3><EditableSpan title={props.title} callBack={editTodolist}/>
-            <button onClick={removeTodolist}>x</button>
+            <IconButton onClick={removeTodolist}>
+                <HighlightOff color={"secondary"}/>
+            </IconButton>
         </h3>
         <div>
-            <Input callback={addTaskHandler}/>
+            <Input callback={addTaskHandler} title={'Add task'}/>
         </div>
-        <ul>
+        <List>
             {
                 props.tasks.map(t => {
                     const onClickHandler = () => props.removeTask(t.id, props.id)
@@ -56,25 +60,45 @@ export function Todolist(props: PropsType) {
                         let newIsDoneValue = e.currentTarget.checked;
                         props.changeTaskStatus(t.id, newIsDoneValue, props.id);
                     }
-
-                    return <li key={t.id} className={t.isDone ? "is-done" : ""}>
-                        <input type="checkbox" onChange={onChangeHandler} checked={t.isDone}/>
-                        <EditableSpan title={t.title} callBack={(newTitle) => editTaskHandler(t.id, newTitle)}/>
-                        <button onClick={onClickHandler}>x</button>
-                    </li>
+                    return (
+                        <ListItem key={t.id} disableGutters dense>
+                            <Checkbox onChange={onChangeHandler} checked={t.isDone} color={'primary'}/>
+                            <span className={t.isDone ? "is-done" : ""}>
+                                <EditableSpan
+                                    title={t.title}
+                                    callBack={(newTitle) => editTaskHandler(t.id, newTitle)}
+                                />
+                            </span>
+                            <IconButton onClick={onClickHandler}>
+                                <Delete/>
+                            </IconButton>
+                        </ListItem>
+                    )
                 })
             }
-        </ul>
+        </List>
         <div>
-            <button className={props.filter === 'all' ? "active-filter" : ""}
-                    onClick={onAllClickHandler}>All
-            </button>
-            <button className={props.filter === 'active' ? "active-filter" : ""}
-                    onClick={onActiveClickHandler}>Active
-            </button>
-            <button className={props.filter === 'completed' ? "active-filter" : ""}
-                    onClick={onCompletedClickHandler}>Completed
-            </button>
+            <Button
+                className={props.filter === 'all' ? "active-filter" : ""}
+                onClick={onAllClickHandler}
+                variant='contained'
+                size={"small"}
+                color={props.filter === 'all' ? "primary" : "default"}
+            >All</Button>
+            <Button
+                className={props.filter === 'active' ? "active-filter" : ""}
+                onClick={onActiveClickHandler}
+                variant='contained'
+                size={"small"}
+                color={props.filter === 'active' ? "primary" : "default"}
+            >Active</Button>
+            <Button
+                className={props.filter === 'completed' ? "active-filter" : ""}
+                onClick={onCompletedClickHandler}
+                variant='contained'
+                size={"small"}
+                color={props.filter === 'completed' ? "primary" : "default"}
+            >Completed</Button>
         </div>
     </div>
 }
